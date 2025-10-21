@@ -1,0 +1,5 @@
+{
+  "name": "Profit Pilot",
+  "description": "A simple, mobile-first invoice application to track sales, profits, and partner cuts. It includes daily and monthly analytics to provide insights into your business performance.",
+  "requestFramePermissions": []
+}

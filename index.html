@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profit Pilot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              primary: {
+                DEFAULT: 'hsl(243, 85%, 64%)',
+                hover: 'hsl(243, 75%, 58%)',
+                light: 'hsl(243, 100%, 96%)',
+                dark: 'hsl(243, 85%, 64%)',
+                'dark-hover': 'hsl(243, 85%, 70%)',
+                'dark-light': 'hsla(243, 85%, 64%, 0.1)',
+              },
+              secondary: {
+                DEFAULT: 'hsl(153, 53%, 51%)',
+                dark: 'hsl(153, 63%, 40%)',
+                light: 'hsl(153, 60%, 95%)',
+                'dark-default': 'hsl(153, 53%, 51%)',
+                'dark-dark': 'hsl(153, 53%, 61%)',
+                'dark-light': 'hsla(153, 53%, 51%, 0.1)',
+              },
+              background: 'hsl(210, 40%, 98%)',
+              card: 'hsl(0, 0%, 100%)',
+              text: {
+                primary: 'hsl(215, 28%, 17%)',
+                secondary: 'hsl(215, 16%, 47%)',
+              },
+              border: 'hsl(214, 32%, 91%)',
+              input: 'hsl(210, 40%, 96.1%)',
+              'dark-background': 'hsl(222, 47%, 11%)',
+              'dark-card': 'hsl(222, 47%, 14%)',
+              'dark-text': {
+                primary: 'hsl(210, 40%, 98%)',
+                secondary: 'hsl(215, 20%, 65%)',
+              },
+              'dark-border': 'hsl(217, 33%, 20%)',
+              'dark-input': 'hsl(217, 33%, 18%)',
+            },
+            borderRadius: {
+              'xl': '0.75rem',
+              '2xl': '1rem',
+              '3xl': '1.5rem',
+            }
+          }
+        }
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+  }
+}
+</script>
+</head>
+  <body class="bg-background dark:bg-dark-background font-sans">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
