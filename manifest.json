@@ -1,0 +1,16 @@
+{
+  "short_name": "Profit Pilot",
+  "name": "Profit Pilot",
+  "description": "A simple, mobile-first invoice application to track sales, profits, and partner cuts. It includes daily and monthly analytics to provide insights into your business performance.",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#5145e5",
+  "background_color": "#fbfcfe"
+}
