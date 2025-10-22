@@ -75,7 +75,7 @@ export const AddSaleForm: React.FC<AddSaleFormProps> = ({ onAddSale, partners })
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g., iPhone 15 Pro"
-            className="mt-1 block w-full px-3 py-2 bg-input dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm dark:text-dark-text-primary"
+            className="mt-1 block w-full px-3 py-2 bg-input dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm text-text-primary dark:text-dark-text-primary"
             required
           />
         </div>
@@ -87,7 +87,7 @@ export const AddSaleForm: React.FC<AddSaleFormProps> = ({ onAddSale, partners })
             onChange={(e) => setDescription(e.target.value)}
             placeholder="e.g., 256GB model, sold to Jane"
             rows={2}
-            className="mt-1 block w-full px-3 py-2 bg-input dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm dark:text-dark-text-primary"
+            className="mt-1 block w-full px-3 py-2 bg-input dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm text-text-primary dark:text-dark-text-primary"
           />
         </div>
         <div>
@@ -98,7 +98,7 @@ export const AddSaleForm: React.FC<AddSaleFormProps> = ({ onAddSale, partners })
             value={purchasePrice}
             onChange={(e) => setPurchasePrice(e.target.value)}
             placeholder="e.g., 50.00"
-            className="mt-1 block w-full px-3 py-2 bg-input dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm dark:text-dark-text-primary"
+            className="mt-1 block w-full px-3 py-2 bg-input dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm text-text-primary dark:text-dark-text-primary"
             min="0"
             step="0.01"
             required
@@ -112,7 +112,7 @@ export const AddSaleForm: React.FC<AddSaleFormProps> = ({ onAddSale, partners })
             value={soldPrice}
             onChange={(e) => setSoldPrice(e.target.value)}
             placeholder="e.g., 80.00"
-            className="mt-1 block w-full px-3 py-2 bg-input dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm dark:text-dark-text-primary"
+            className="mt-1 block w-full px-3 py-2 bg-input dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm text-text-primary dark:text-dark-text-primary"
             min="0"
             step="0.01"
             required

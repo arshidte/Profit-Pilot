@@ -116,7 +116,7 @@ export const SaleList: React.FC<SaleListProps> = ({ sales, partners }) => {
                     id="sort-sales" 
                     value={sortOption} 
                     onChange={(e) => setSortOption(e.target.value as SortOption)}
-                    className="mt-1 block w-full px-3 py-2 bg-card dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm dark:text-dark-text-primary"
+                    className="mt-1 block w-full px-3 py-2 bg-card dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm text-text-primary dark:text-dark-text-primary"
                 >
                     <option value="date-desc">Newest First</option>
                     <option value="date-asc">Oldest First</option>
@@ -133,7 +133,7 @@ export const SaleList: React.FC<SaleListProps> = ({ sales, partners }) => {
                     id="start-date" 
                     value={startDate} 
                     onChange={(e) => setStartDate(e.target.value)} 
-                    className="mt-1 block w-full px-3 py-2 bg-card dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm dark:text-dark-text-primary"
+                    className="mt-1 block w-full px-3 py-2 bg-card dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm text-text-primary dark:text-dark-text-primary"
                 />
             </div>
             <div>
@@ -143,7 +143,7 @@ export const SaleList: React.FC<SaleListProps> = ({ sales, partners }) => {
                     id="end-date" 
                     value={endDate} 
                     onChange={(e) => setEndDate(e.target.value)} 
-                    className="mt-1 block w-full px-3 py-2 bg-card dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm dark:text-dark-text-primary"
+                    className="mt-1 block w-full px-3 py-2 bg-card dark:bg-dark-input border border-border dark:border-dark-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary sm:text-sm text-text-primary dark:text-dark-text-primary"
                 />
             </div>
             <div className="sm:col-span-2 flex items-end gap-2">

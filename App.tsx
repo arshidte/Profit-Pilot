@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { type Partner, type Sale, type Settlement } from './types';
+import { type Partner, type Sale, type Settlement, type User } from './types';
 import * as api from './api';
 import { AddSaleForm } from './components/AddSaleForm';
 import { PartnerManagement } from './components/PartnerManagement';
@@ -7,10 +7,13 @@ import { Analytics } from './components/Analytics';
 import { SaleList } from './components/SaleList';
 import { BottomNavbar, type View } from './components/BottomNavbar';
 import { ThemeToggle } from './components/ThemeToggle';
+import { Auth } from './components/Auth';
+import { ArrowRightOnRectangleIcon } from './components/icons';
 
 type Theme = 'light' | 'dark';
 
 const App: React.FC = () => {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [sales, setSales] = useState<Sale[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
@@ -21,15 +24,23 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    api.fetchAllData().then(data => {
-      setSales(data.sales);
-      setPartners(data.partners);
-      setSettlements(data.settlements);
-      setLoading(false);
-    }).catch(error => {
-      console.error("Failed to fetch data", error);
-      setLoading(false);
-    });
+    const checkAuthAndLoadData = async () => {
+      try {
+        const user = await api.getCurrentUser();
+        if (user) {
+          setCurrentUser(user);
+          const data = await api.fetchAllData(user.id);
+          setSales(data.sales);
+          setPartners(data.partners);
+          setSettlements(data.settlements);
+        }
+      } catch (error) {
+        console.error("Initialization failed", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuthAndLoadData();
   }, []);
 
   useEffect(() => {
@@ -41,22 +52,50 @@ const App: React.FC = () => {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  const handleAuthSuccess = async (user: User) => {
+    setCurrentUser(user);
+    setLoading(true);
+    try {
+      const data = await api.fetchAllData(user.id);
+      setSales(data.sales);
+      setPartners(data.partners);
+      setSettlements(data.settlements);
+      setCurrentView('dashboard');
+    } catch (error) {
+        console.error("Failed to fetch data after auth", error);
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await api.signOut();
+    setCurrentUser(null);
+    setSales([]);
+    setPartners([]);
+    setSettlements([]);
+    setCurrentView('dashboard');
+  };
+
   const handleThemeToggle = () => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
 
   const handleAddSale = useCallback(async (newSaleData: Omit<Sale, 'id' | 'timestamp' | 'profit'>) => {
-    const newSale = await api.addSale(newSaleData);
+    if (!currentUser) return;
+    const newSale = await api.addSale(currentUser.id, newSaleData);
     setSales(prevSales => [newSale, ...prevSales]);
-  }, []);
+  }, [currentUser]);
 
   const handleAddPartner = useCallback(async (newPartnerData: Omit<Partner, 'id'>) => {
-    const newPartner = await api.addPartner(newPartnerData);
+    if (!currentUser) return;
+    const newPartner = await api.addPartner(currentUser.id, newPartnerData);
     setPartners(prevPartners => [...prevPartners, newPartner]);
-  }, []);
+  }, [currentUser]);
   
   const handleDeletePartner = useCallback(async (id: string) => {
-    await api.deletePartner(id);
+    if (!currentUser) return;
+    await api.deletePartner(currentUser.id, id);
     
     setPartners(prev => prev.filter(p => p.id !== id));
     setSettlements(prev => prev.filter(s => s.partnerId !== id));
@@ -71,12 +110,13 @@ const App: React.FC = () => {
         return sale;
       }),
     );
-  }, []);
+  }, [currentUser]);
 
   const handleAddSettlement = useCallback(async (newSettlementData: Omit<Settlement, 'id' | 'timestamp'>) => {
-    const newSettlement = await api.addSettlement(newSettlementData);
+    if (!currentUser) return;
+    const newSettlement = await api.addSettlement(currentUser.id, newSettlementData);
     setSettlements(prevSettlements => [...prevSettlements, newSettlement]);
-  }, []);
+  }, [currentUser]);
 
   const renderContent = () => {
     switch (currentView) {
@@ -111,11 +151,14 @@ const App: React.FC = () => {
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
-          <h2 className="mt-4 text-xl font-semibold text-text-primary dark:text-dark-text-primary">Loading Data...</h2>
-          <p className="mt-2 text-text-secondary dark:text-dark-text-secondary">Please wait a moment.</p>
+          <h2 className="mt-4 text-xl font-semibold text-text-primary dark:text-dark-text-primary">Loading...</h2>
         </div>
       </div>
     );
+  }
+
+  if (!currentUser) {
+    return <Auth onAuthSuccess={handleAuthSuccess} />;
   }
 
   return (
@@ -126,7 +169,17 @@ const App: React.FC = () => {
             <h1 className="text-2xl font-bold tracking-tight text-text-primary dark:text-dark-text-primary">Profit Pilot</h1>
             <p className="text-sm text-text-secondary dark:text-dark-text-secondary">Your Simple Invoice & Profit Tracker</p>
           </div>
-          <ThemeToggle theme={theme} onToggle={handleThemeToggle} />
+          <div className="flex items-center gap-2 sm:gap-4">
+            <span className="text-sm font-medium hidden sm:block">Hi, {currentUser.name.split(' ')[0]}</span>
+             <button
+                onClick={handleSignOut}
+                className="p-2 rounded-full text-text-secondary dark:text-dark-text-secondary hover:bg-slate-200/60 dark:hover:bg-dark-border focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:ring-offset-dark-background"
+                aria-label="Sign out"
+              >
+               <ArrowRightOnRectangleIcon className="w-6 h-6" />
+            </button>
+            <ThemeToggle theme={theme} onToggle={handleThemeToggle} />
+          </div>
         </div>
       </header>
 
