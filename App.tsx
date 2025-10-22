@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { type Partner, type Sale, type Settlement } from './types';
+import * as api from './api';
 import { AddSaleForm } from './components/AddSaleForm';
 import { PartnerManagement } from './components/PartnerManagement';
 import { Analytics } from './components/Analytics';
@@ -10,6 +11,7 @@ import { ThemeToggle } from './components/ThemeToggle';
 type Theme = 'light' | 'dark';
 
 const App: React.FC = () => {
+  const [loading, setLoading] = useState(true);
   const [sales, setSales] = useState<Sale[]>([]);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [settlements, setSettlements] = useState<Settlement[]>([]);
@@ -19,35 +21,16 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    try {
-      const storedSales = localStorage.getItem('sales');
-      if (storedSales) {
-        setSales(JSON.parse(storedSales));
-      }
-      const storedPartners = localStorage.getItem('partners');
-      if (storedPartners) {
-        setPartners(JSON.parse(storedPartners));
-      }
-      const storedSettlements = localStorage.getItem('settlements');
-      if (storedSettlements) {
-        setSettlements(JSON.parse(storedSettlements));
-      }
-    } catch (error) {
-      console.error("Failed to parse data from localStorage", error);
-    }
+    api.fetchAllData().then(data => {
+      setSales(data.sales);
+      setPartners(data.partners);
+      setSettlements(data.settlements);
+      setLoading(false);
+    }).catch(error => {
+      console.error("Failed to fetch data", error);
+      setLoading(false);
+    });
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem('sales', JSON.stringify(sales));
-  }, [sales]);
-
-  useEffect(() => {
-    localStorage.setItem('partners', JSON.stringify(partners));
-  }, [partners]);
-  
-  useEffect(() => {
-    localStorage.setItem('settlements', JSON.stringify(settlements));
-  }, [settlements]);
 
   useEffect(() => {
     if (theme === 'dark') {
@@ -62,49 +45,36 @@ const App: React.FC = () => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
 
-  const handleAddSale = useCallback((newSaleData: Omit<Sale, 'id' | 'timestamp' | 'profit'>) => {
-    const newSale: Sale = {
-      ...newSaleData,
-      id: crypto.randomUUID(),
-      timestamp: Date.now(),
-      profit: newSaleData.soldPrice - newSaleData.purchasePrice,
-    };
+  const handleAddSale = useCallback(async (newSaleData: Omit<Sale, 'id' | 'timestamp' | 'profit'>) => {
+    const newSale = await api.addSale(newSaleData);
     setSales(prevSales => [newSale, ...prevSales]);
   }, []);
 
-  const handleAddPartner = useCallback((newPartnerData: Omit<Partner, 'id'>) => {
-    const newPartner: Partner = {
-      ...newPartnerData,
-      id: crypto.randomUUID(),
-    };
+  const handleAddPartner = useCallback(async (newPartnerData: Omit<Partner, 'id'>) => {
+    const newPartner = await api.addPartner(newPartnerData);
     setPartners(prevPartners => [...prevPartners, newPartner]);
   }, []);
   
-  const handleDeletePartner = useCallback((id: string) => {
+  const handleDeletePartner = useCallback(async (id: string) => {
+    await api.deletePartner(id);
+    
     setPartners(prev => prev.filter(p => p.id !== id));
     setSettlements(prev => prev.filter(s => s.partnerId !== id));
     setSales(prev =>
       prev.map(sale => {
-        // Check if partnerIds is an array and includes the partner to be deleted.
         if (Array.isArray(sale.partnerIds) && sale.partnerIds.includes(id)) {
-          // If so, return a new sale object with the partner ID filtered out.
           return {
             ...sale,
             partnerIds: sale.partnerIds.filter(pid => pid !== id),
           };
         }
-        // Otherwise, return the original sale object, preserving its reference.
         return sale;
       }),
     );
   }, []);
 
-  const handleAddSettlement = useCallback((newSettlementData: Omit<Settlement, 'id' | 'timestamp'>) => {
-    const newSettlement: Settlement = {
-      ...newSettlementData,
-      id: crypto.randomUUID(),
-      timestamp: Date.now(),
-    };
+  const handleAddSettlement = useCallback(async (newSettlementData: Omit<Settlement, 'id' | 'timestamp'>) => {
+    const newSettlement = await api.addSettlement(newSettlementData);
     setSettlements(prevSettlements => [...prevSettlements, newSettlement]);
   }, []);
 
@@ -132,6 +102,21 @@ const App: React.FC = () => {
         );
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background dark:bg-dark-background flex items-center justify-center">
+        <div className="text-center">
+          <svg className="mx-auto h-12 w-12 text-primary dark:text-primary-dark animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <h2 className="mt-4 text-xl font-semibold text-text-primary dark:text-dark-text-primary">Loading Data...</h2>
+          <p className="mt-2 text-text-secondary dark:text-dark-text-secondary">Please wait a moment.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background dark:bg-dark-background text-text-primary dark:text-dark-text-primary pb-28 font-sans">
